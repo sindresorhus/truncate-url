@@ -10,6 +10,10 @@ module.exports = function (input, length) {
 		throw new TypeError('Expected length to be a number');
 	}
 
+	if (input.length <= length) {
+		return input;
+	}
+
 	var TRUNCATE_SYMBOL_LENGTH = 2;
 	var parsed = url.parse(input);
 	var remainingLength = length - (input.length - parsed.path.length) - TRUNCATE_SYMBOL_LENGTH;
@@ -26,7 +30,7 @@ module.exports = function (input, length) {
 		}
 
 		pathPartsRet.push(x);
-		remainingLength -= x.length;
+		remainingLength -= x.length + 1;
 	}
 
 	parsed.pathname = pathPartsRet.reverse().join('/');
