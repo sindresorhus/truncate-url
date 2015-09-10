@@ -1,0 +1,37 @@
+{
+  "name": "truncate-url",
+  "version": "0.0.0",
+  "description": "Truncate a URL to a specific length",
+  "license": "MIT",
+  "repository": "sindresorhus/truncate-url",
+  "author": {
+    "name": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "xo && ava"
+  },
+  "files": [
+    "index.js"
+  ],
+  "keywords": [
+    "url",
+    "uri",
+    "truncate",
+    "shorten",
+    "crop",
+    "cut",
+    "length",
+    "limit",
+    "string",
+    "str"
+  ],
+  "devDependencies": {
+    "ava": "*",
+    "xo": "*"
+  }
+}
