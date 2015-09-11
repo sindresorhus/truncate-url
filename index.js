@@ -14,7 +14,7 @@ module.exports = function (input, length) {
 		return input;
 	}
 
-	var TRUNCATE_SYMBOL_LENGTH = 2;
+	var TRUNCATE_SYMBOL_LENGTH = 3;
 	var parsed = url.parse(input);
 	var remainingLength = length - (input.length - parsed.path.length) - TRUNCATE_SYMBOL_LENGTH;
 	var pathParts = parsed.path.split('/');
