@@ -23,8 +23,7 @@ module.exports = function (input, length) {
 
 	while (i--) {
 		var x = pathParts[i];
-
-		if (remainingLength < x.length) {
+		if (remainingLength < x.length + 1) {
 			pathPartsRet.push('…');
 			break;
 		}
