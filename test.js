@@ -16,9 +16,3 @@ test('should pass corner case', function (t) {
 	t.true(result.length <= 24, result + ' is > 24');
 	t.end();
 });
-
-test('should pass corner case', function (t) {
-	var result = fn('http://example.com/a/b/cd', 24);
-	t.true(result.length <= 24, result + ' is > 24');
-	t.end();
-});
