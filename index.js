@@ -1,7 +1,7 @@
 'use strict';
-var url = require('url');
+const url = require('url');
 
-module.exports = function (input, length) {
+module.exports = (input, length) => {
 	if (typeof input !== 'string') {
 		throw new TypeError('Expected input to be a string');
 	}
@@ -14,15 +14,16 @@ module.exports = function (input, length) {
 		return input;
 	}
 
-	var TRUNCATE_SYMBOL_LENGTH = 2;
-	var parsed = url.parse(input);
-	var remainingLength = length - (input.length - parsed.path.length) - TRUNCATE_SYMBOL_LENGTH;
-	var pathParts = parsed.path.split('/');
-	var pathPartsRet = [];
-	var i = pathParts.length;
+	const TRUNCATE_SYMBOL_LENGTH = 2;
+	const parsed = url.parse(input);
+	let remainingLength = length - (input.length - parsed.path.length) - TRUNCATE_SYMBOL_LENGTH;
+	const pathParts = parsed.path.split('/');
+	const pathPartsRet = [];
+	let i = pathParts.length;
 
 	while (i--) {
-		var x = pathParts[i];
+		const x = pathParts[i];
+
 		if (remainingLength < x.length + 1) {
 			pathPartsRet.push('…');
 			break;

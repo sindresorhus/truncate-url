@@ -13,7 +13,7 @@ $ npm install --save truncate-url
 ## Usage
 
 ```js
-var truncateUrl = require('truncate-url');
+const truncateUrl = require('truncate-url');
 
 truncateUrl('http://sindresorhus.com/foo/bar/baz/faz', 30);
 //=> 'http://sindresorhus.com/…/faz'
@@ -22,4 +22,4 @@ truncateUrl('http://sindresorhus.com/foo/bar/baz/faz', 30);
 
 ## License
 
-MIT © [Sindre Sorhus](http://sindresorhus.com)
+MIT © [Sindre Sorhus](https://sindresorhus.com)
