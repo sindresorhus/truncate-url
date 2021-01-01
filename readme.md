@@ -1,4 +1,4 @@
-# truncate-url [![Build Status](https://travis-ci.org/sindresorhus/truncate-url.svg?branch=master)](https://travis-ci.org/sindresorhus/truncate-url)
+# truncate-url
 
 > Truncate a URL to a specific length
 
