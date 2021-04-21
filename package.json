@@ -1,37 +1,38 @@
 {
-  "name": "truncate-url",
-  "version": "1.0.0",
-  "description": "Truncate a URL to a specific length",
-  "license": "MIT",
-  "repository": "sindresorhus/truncate-url",
-  "author": {
-    "name": "Sindre Sorhus",
-    "email": "sindresorhus@gmail.com",
-    "url": "sindresorhus.com"
-  },
-  "engines": {
-    "node": ">=4"
-  },
-  "scripts": {
-    "test": "xo && ava"
-  },
-  "files": [
-    "index.js"
-  ],
-  "keywords": [
-    "url",
-    "uri",
-    "truncate",
-    "shorten",
-    "crop",
-    "cut",
-    "length",
-    "limit",
-    "string",
-    "str"
-  ],
-  "devDependencies": {
-    "ava": "*",
-    "xo": "*"
-  }
+	"name": "truncate-url",
+	"version": "1.0.0",
+	"description": "Truncate a URL to a specific length",
+	"license": "MIT",
+	"repository": "sindresorhus/truncate-url",
+	"funding": "https://github.com/sponsors/sindresorhus",
+	"author": {
+		"name": "Sindre Sorhus",
+		"email": "sindresorhus@gmail.com",
+		"url": "https://sindresorhus.com"
+	},
+	"type": "module",
+	"exports": "./index.js",
+	"engines": {
+		"node": ">=12"
+	},
+	"scripts": {
+		"test": "xo && ava"
+	},
+	"files": [
+		"index.js"
+	],
+	"keywords": [
+		"url",
+		"truncate",
+		"shorten",
+		"crop",
+		"cut",
+		"length",
+		"limit",
+		"string"
+	],
+	"devDependencies": {
+		"ava": "^3.15.0",
+		"xo": "^0.39.1"
+	}
 }

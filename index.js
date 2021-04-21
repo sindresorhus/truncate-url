@@ -1,8 +1,7 @@
-'use strict';
-const url = require('url');
+import url from 'node:url';
 
-module.exports = (input, length) => {
-	if (typeof input !== 'string') {
+export default function truncateUrl(urlString, length) {
+	if (typeof urlString !== 'string') {
 		throw new TypeError('Expected input to be a string');
 	}
 
@@ -10,30 +9,30 @@ module.exports = (input, length) => {
 		throw new TypeError('Expected length to be a number');
 	}
 
-	if (input.length <= length) {
-		return input;
+	if (urlString.length <= length) {
+		return urlString;
 	}
 
 	const TRUNCATE_SYMBOL_LENGTH = 2;
-	const parsed = url.parse(input);
-	let remainingLength = length - (input.length - parsed.path.length) - TRUNCATE_SYMBOL_LENGTH;
+	const parsed = url.parse(urlString);
+	let remainingLength = length - (urlString.length - parsed.path.length) - TRUNCATE_SYMBOL_LENGTH;
 	const pathParts = parsed.path.split('/');
-	const pathPartsRet = [];
-	let i = pathParts.length;
+	const pathPartsReturnValue = [];
+	let index = pathParts.length;
 
-	while (i--) {
-		const x = pathParts[i];
+	while (index--) {
+		const x = pathParts[index];
 
 		if (remainingLength < x.length + 1) {
-			pathPartsRet.push('…');
+			pathPartsReturnValue.push('…');
 			break;
 		}
 
-		pathPartsRet.push(x);
+		pathPartsReturnValue.push(x);
 		remainingLength -= x.length + 1;
 	}
 
-	parsed.pathname = pathPartsRet.reverse().join('/');
+	parsed.pathname = pathPartsReturnValue.reverse().join('/');
 
 	return url.format(parsed);
-};
+}
