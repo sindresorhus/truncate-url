@@ -1,6 +1,6 @@
 {
 	"name": "truncate-url",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"description": "Truncate a URL to a specific length",
 	"license": "MIT",
 	"repository": "sindresorhus/truncate-url",
