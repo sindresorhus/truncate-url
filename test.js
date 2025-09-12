@@ -65,6 +65,11 @@ test('throws on invalid input', t => {
 	t.throws(() => truncateUrl(123, 10), {instanceOf: TypeError});
 	t.throws(() => truncateUrl('http://example.com', '10'), {instanceOf: TypeError});
 	t.throws(() => truncateUrl('http://example.com', null), {instanceOf: TypeError});
+
+	// Test non-finite numbers
+	t.throws(() => truncateUrl('http://example.com', Number.NaN), {instanceOf: TypeError});
+	t.throws(() => truncateUrl('http://example.com', Infinity), {instanceOf: TypeError});
+	t.throws(() => truncateUrl('http://example.com', -Infinity), {instanceOf: TypeError});
 });
 
 test('throws on invalid URLs', t => {
@@ -87,4 +92,65 @@ test('handles edge cases correctly', t => {
 
 	// Root path only
 	t.is(truncateUrl('https://example.com/', 20), 'https://example.com/');
+});
+
+test('handles critical edge cases with length constraints', t => {
+	// URLs with query parameters exceeding maxLength
+	const result1 = truncateUrl('https://example.com/path?query=value', 25);
+	t.true(result1.length <= 25);
+	t.true(result1.includes('…'));
+
+	// URLs with hash fragments exceeding maxLength
+	const result2 = truncateUrl('https://example.com/path#section', 25);
+	t.true(result2.length <= 25);
+	t.true(result2.includes('…'));
+
+	// URLs with both query and hash exceeding maxLength
+	const result3 = truncateUrl('https://example.com/very/long/path?query=value#section', 30);
+	t.true(result3.length <= 30);
+	t.true(result3.includes('…'));
+
+	// Base domain exceeds maxLength
+	const result4 = truncateUrl('https://very-long-domain-name.example.com/path', 15);
+	t.true(result4.length <= 15);
+	t.true(result4.includes('…'));
+});
+
+test('handles extreme maxLength values', t => {
+	const url = 'https://example.com/path';
+
+	// MaxLength = 0
+	const result0 = truncateUrl(url, 0);
+	t.is(result0.length, 0);
+	t.is(result0, '');
+
+	// MaxLength = 1 (exactly ellipsis length)
+	const result1 = truncateUrl(url, 1);
+	t.is(result1.length, 1);
+	t.is(result1, '…');
+
+	// MaxLength = 2
+	const result2 = truncateUrl(url, 2);
+	t.true(result2.length <= 2);
+
+	// Negative maxLength should throw
+	t.throws(() => truncateUrl(url, -1), {instanceOf: TypeError});
+});
+
+test('preserves length contract in all scenarios', t => {
+	const testCases = [
+		{url: 'https://example.com/path?query=value', maxLength: 30},
+		{url: 'https://example.com/very/long/path?query=value#section', maxLength: 40},
+		{url: 'https://user:pass@example.com/path', maxLength: 25},
+		{url: 'https://example.com:8080/path', maxLength: 20},
+		{url: 'https://example.com/path%20with%20spaces', maxLength: 35},
+	];
+
+	for (const testCase of testCases) {
+		const result = truncateUrl(testCase.url, testCase.maxLength);
+		t.true(
+			result.length <= testCase.maxLength,
+			`Result "${result}" (${result.length} chars) exceeds maxLength ${testCase.maxLength} for URL "${testCase.url}"`,
+		);
+	}
 });

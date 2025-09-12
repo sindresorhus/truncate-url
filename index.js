@@ -3,8 +3,8 @@ export default function truncateUrl(urlString, maxLength) {
 		throw new TypeError('Expected input to be a string');
 	}
 
-	if (typeof maxLength !== 'number') {
-		throw new TypeError('Expected length to be a number');
+	if (!(typeof maxLength === 'number' && Number.isFinite(maxLength) && maxLength >= 0)) {
+		throw new TypeError('Expected length to be a finite non-negative number');
 	}
 
 	// Parse URL first to validate it
@@ -14,42 +14,64 @@ export default function truncateUrl(urlString, maxLength) {
 		return urlString;
 	}
 
-	const placeholder = '__ELLIPSIS__';
 	const ellipsis = '…';
 
-	const pathParts = parsed.pathname.split('/');
-
-	// Calculate base URL length (everything except pathname)
-	const baseLength = urlString.length - parsed.pathname.length;
-
-	// Calculate how much space we have for path segments
-	const availablePathLength = maxLength - baseLength - ellipsis.length - 1; // -1 for "/"
-
-	// Build truncated path from the end
-	const keptParts = [];
-	let pathLength = 0;
-
-	// If we can't fit any path segments, just use ellipsis
-	if (availablePathLength < 0) {
-		parsed.pathname = '/' + placeholder;
-		return parsed.toString().replace(placeholder, ellipsis);
+	// Get the base URL without pathname, including auth if present
+	let base = parsed.origin;
+	if (parsed.username || parsed.password) {
+		const auth = parsed.username + (parsed.password ? ':' + parsed.password : '');
+		base = `${parsed.protocol}//${auth}@${parsed.host}`;
 	}
 
-	for (let i = pathParts.length - 1; i >= 0; i--) {
-		const part = pathParts[i];
-		// Add 1 for the "/" separator before this part (except for empty first part)
-		const neededLength = part.length + (i > 0 || part ? 1 : 0);
+	const queryAndHash = parsed.search + parsed.hash;
 
-		if (pathLength + neededLength > availablePathLength) {
-			// Can't fit this part, insert placeholder
-			keptParts.unshift(placeholder);
-			break;
+	// Split pathname into segments (excluding empty first element from leading /)
+	const pathSegments = parsed.pathname.split('/').slice(1);
+
+	// If no path segments beyond root, return base + query/hash
+	if (pathSegments.length === 0) {
+		const minimalUrl = base + queryAndHash;
+		if (minimalUrl.length <= maxLength) {
+			return minimalUrl;
 		}
 
-		keptParts.unshift(part);
-		pathLength += neededLength;
+		// Base + query/hash too long, truncate aggressively
+		if (maxLength <= ellipsis.length) {
+			return ellipsis.slice(0, maxLength);
+		}
+
+		return urlString.slice(0, maxLength - ellipsis.length) + ellipsis;
 	}
 
-	parsed.pathname = keptParts.join('/');
-	return parsed.toString().replace(placeholder, ellipsis);
+	// Try to build URL with as many trailing segments as possible
+	// Start with the full path and work backwards
+	for (let numberSegments = pathSegments.length; numberSegments >= 1; numberSegments--) {
+		const segments = pathSegments.slice(-numberSegments);
+		const testUrl = numberSegments === pathSegments.length
+			? base + '/' + segments.join('/') + queryAndHash
+			: base + '/' + ellipsis + '/' + segments.join('/') + queryAndHash;
+
+		if (testUrl.length <= maxLength) {
+			return testUrl;
+		}
+	}
+
+	// No segments fit with query/hash, try just ellipsis + query/hash
+	const minimalWithQueryHash = base + '/' + ellipsis + queryAndHash;
+	if (minimalWithQueryHash.length <= maxLength) {
+		return minimalWithQueryHash;
+	}
+
+	// Can't fit query/hash, try just ellipsis
+	const justBaseAndEllipsis = base + '/' + ellipsis;
+	if (justBaseAndEllipsis.length <= maxLength) {
+		return justBaseAndEllipsis;
+	}
+
+	// Last resort: truncate everything
+	if (maxLength <= ellipsis.length) {
+		return ellipsis.slice(0, maxLength);
+	}
+
+	return urlString.slice(0, maxLength - ellipsis.length) + ellipsis;
 }
